@@ -1,0 +1,34 @@
+{% extends 'main.html' %}
+{% block content %}
+
+<div>
+    <table class="table table-sm table-dark">
+    <caption style="color:black">Purchase History of Customers</caption>
+      <thead>
+        <tr>
+          <th scope="col">Purchase Id</th>
+          <th scope="col">User ID</th>
+          <th scope="col">Item Name</th>
+          <th scope="col">Price</th>
+          <th scope="col">Amount Paid</th>
+          <th scope="col">Purchase Date</th>
+        </tr>
+      </thead>
+      <tbody>
+         {% for col in purchase_details %}
+        
+    
+            <tr>
+              <td>{{col[0]}}</td>
+              <td>{{col[1]}}</td>
+              <td>{{col[2]}}</td>
+              <td>{{col[3]}}</td>
+              <td>{{col[4]}}</td>
+              <td>{{col[5]}}</td>
+            </tr>
+            
+       {% endfor %}
+      </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+
+ 
+
+{% extends 'main.html' %}
+{% block content %}
+
+<div class="container p-3 my-3 bg-dark text-white" style="width:35%;height:200%; padding:20px; border-radius: 25px;">
+
+<div class="banner">
+          <h1 style="text-align:center">ADD PURCHASE</h1>
+</div> 
+<img src="/static/images/addcart.png" width="100%"></img>
+
+<form action="" method="POST">
+   <div style="background-color:white; padding:10px">
+           <label for="exampleInputEmail1" style="color:black;  font-size:25px">Select the User</label><br>
+            <select name="customer" class="custom-select" style="width:200px; font-size:25px">
+            {% for customer in customers %}
+                <option value="{{customer[0]}}" style="font-size:25px">{{customer[2]}}</option>
+            {% endfor %}
+            </select>
+   </div>
+   
+ 
+   
+   
+  <div class="form-group" style="background-color:white; padding:10px">
+    <label for="exampleInputEmail1" style="color:black;  font-size:25px">Item Name</label>
+    <input type="text" class="form-control" name="item" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Item Name">
+    
+  </div>
+  <div class="form-group" style="background-color:white; padding:10px">
+    <label for="exampleInputEmail1" style="color:black; font-size:25px">Price</label>
+    <input type="number" class="form-control" name="price" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter the Price">
+
+  </div>
+  <div class="form-group" style="background-color:white; padding:10px">
+    <label for="exampleInputPassword1" style="color:black; font-size:25px">Amount Paid</label>
+    <input type="number" name="amount_paid" class="form-control" id="exampleInputPassword1" placeholder="Amount Paid">
+  </div>
+  
+  <div class="form-group" style="background-color:white; padding:10px">
+    <label for="exampleInputPassword1" style="color:black; font-size:25px">Purchase Date</label>
+    <input type="date" name="purchase_date" class="form-control" id="exampleInputPassword1" placeholder="Purchase Date">
+  </div>
+  
+  <div class="d-grid gap-2 col-6 mx-auto" style="padding:10px">
+  <button class="btn btn-warning" type="submit">Add Purchase</button>
+  
+  </div>
+  
+</form>
+ 
+</div>    
+ 
+         
+
+        
+{% endblock %}    
+
+
+
+
+
+
+
+
+
+

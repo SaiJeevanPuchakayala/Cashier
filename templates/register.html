@@ -1,0 +1,50 @@
+{% extends 'main.html' %}
+{% block content %}
+
+<div class="container p-3 my-3 bg-dark text-white" style="width:35%;height:500%; padding:20px; border-radius: 25px;">
+
+<div class="banner">
+          <h1 style="text-align:center;font-size:30px">SIGN UP</h1>
+</div> 
+
+<img src="/static/images/register.jpg" width="100%"></img>
+<br>
+{% if message %}
+    <div class="msg" style="background-color:#F4F6F7 ;color:black; font-size:18px;text-align:center" >{{message}}</div>
+{% endif %}
+<form action="" method="POST">
+  <div class="form-group" style="background-color:#F4F6F7; padding:10px" >
+    <label for="exampleInputEmail1" style="color:black; font-size:25px">Username</label>
+    <input type="text" class="form-control" name="username" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Username">
+  </div>
+  <div class="form-group" style="background-color:#F4F6F7 ; padding:10px" >
+    <label for="exampleInputEmail1" style="color:black; font-size:25px">Email address</label>
+    <input type="email" class="form-control" name="email" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+  </div>
+  <div class="form-group" style="background-color:#F4F6F7 ; padding:10px" >
+    <label for="exampleInputPassword1" style="color:black; font-size:25px">Password</label>
+    <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+  </div>
+  
+  
+  
+  <div style="background-color:#F4F6F7 ; padding:10px; text-align:center">
+      <p style="color:black; font-size:20px;">By clicking register, you agree on our <a href="/terms">Terms and Conditions of our Retail store</a>.</p>
+  </div>
+  
+  <div style="background-color:#F4F6F7; padding:10px; text-align:center">
+      <p style="color:black; font-size:20px;">Already Registered? <a href="/login">Click here to login</a>.</p>
+  </div>
+  
+  <div class="d-grid gap-2 col-6 mx-auto" style="padding:10px">
+      <button class="btn btn-danger" type="submit">Sign Up</button>
+  
+  </div>
+</form>
+ 
+    
+</div>
+         
+
+        
+{% endblock %}    

@@ -1,0 +1,55 @@
+{% extends 'main.html' %}
+{% block content %}
+
+<div class="container p-3 my-3 bg-dark text-white" style="width:35%;height:200%; padding:20px; border-radius: 25px;">
+
+<div class="banner">
+          <h1 style="text-align:center">UPDATE PURCHASE</h1>
+</div> 
+<img src="/static/images/Update-Cart.jpg" width="100%"></img>
+
+<form action="" method="POST">
+   
+   <div class="form-group" style="background-color:white; padding:10px">
+    <label for="exampleInputEmail1" style="color:black;  font-size:25px">Item Name</label>
+    <input  value={{purchase[3]}} type="text" class="form-control" name="item" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Item Name">
+    
+  </div>
+  <div class="form-group" style="background-color:white; padding:10px">
+    <label for="exampleInputEmail1" style="color:black; font-size:25px">Price</label>
+    <input value={{purchase[4]}} type="number" class="form-control" name="price" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter the Price">
+
+  </div>
+  <div class="form-group" style="background-color:white; padding:10px">
+    <label for="exampleInputPassword1" style="color:black; font-size:25px">Amount Paid</label>
+    <input value={{purchase[5]}} type="number" name="amount_paid" class="form-control" id="exampleInputPassword1" placeholder="Amount Paid">
+  </div>
+  
+  <div class="form-group" style="background-color:white; padding:10px">
+    <label for="exampleInputPassword1" style="color:black; font-size:25px">Purchase Date</label>
+    <input value={{purchase[2]}} type="date" name="purchase_date" class="form-control" id="exampleInputPassword1" placeholder="Purchase Date">
+  </div>
+  
+  <div class="d-grid gap-2 col-6 mx-auto" style="padding:10px">
+  <button class="btn btn-warning" type="submit">Update Purchase</button>
+  
+  </div>
+  
+</form>
+ 
+</div>    
+ 
+         
+
+        
+{% endblock %}    
+
+
+
+
+
+
+
+
+
+

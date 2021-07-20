@@ -1,0 +1,29 @@
+{% extends 'main.html' %}
+{% block content %}
+
+<br>
+<div class="container" style="background-color: black; border-radius: 0.5em;width:81.5em;display: flex; background: rgba(60, 60, 60,0.7);">
+     <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16" style="color:white;padding:5px">
+        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+        <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+    </svg>
+    <h2 style="text-align:left; color:white;padding:22px; font-size:17px">Welcome {{username}}!!!</h2>
+    <a style="margin: auto 0px auto auto;" href = "/"><button type="button" class="btn btn-warning btn-md" >Go Back to Home</button></a>
+</div>
+<br>
+<div class="container p-3 my-3 bg-dark text-white" style="padding:20px; border-radius: 25px; background-color:#000305">
+<div class="jumbotron" style="padding:20px; border-radius: 25px; background-color:rgb(251, 252, 252,0.9);">
+  
+  <h1 class="display-4" style="color:black; text-align:center">Contact Our Service</h1>
+  <p class="lead" style="color:black; text-align:center">For any queries and information, contact us via email or mobile phone</p>
+  <hr class="my-4" style="color:black">
+  <p style="color:black; text-align:center; font-family:verdana">Email : retailerpaybook@gmail.com</p><br>
+  <p style="color:black; text-align:center; font-family:verdana">Phone no : 9876543210</p>
+  
+</div>
+</div>
+
+
+
+
+{% endblock %}
