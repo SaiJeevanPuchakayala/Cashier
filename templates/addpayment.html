@@ -1,47 +1,116 @@
-{% extends 'main.html' %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cashier</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.4.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.4/semantic.min.js"></script>
+    <script src="https://cdn.rawgit.com/mdehoog/Semantic-UI-Calendar/76959c6f7d33a527b49be76789e984a0a407350b/dist/calendar.min.js"></script>
 
-<div class="container p-3 my-3 bg-dark text-white" style="width:35%;height:200%; padding:20px; border-radius: 25px;">
+</head>
 
-  <div class="banner">
-          <h1 style="text-align:center">ADD PAYMENT</h1>
-  </div> 
-
-<img src="/static/images/payment2.jpg" width="100%"></img>
-
-<form action="" method="POST">
-   
- <div class="form-group" style="background-color:white; padding:10px">
-    <label for="exampleInputEmail1" style="color:black;  font-size:25px">Purchase Id</label>
-    <input type="number" class="form-control" name="purchase_id" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Item Name">
+<style>
+    body > .grid {
+      height: 100%;
+    }
+    .image {
+      margin-top: -100px;
+    }
+    .column {
+      max-width: 450px;
+    }
+</style>
+<body style="background-color: #5fafff;">
     
-  </div>
-  <div class="form-group" style="background-color:white; padding:10px">
-    <label for="exampleInputEmail1" style="color:black; font-size:25px">Amount Paid</label>
-    <input type="number" class="form-control" name="amount_paid" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter the Price">
+    <div style="background-color: #5fafff;" class="ui segment">
 
-  </div>
-  
-  
-  <div class="form-group" style="background-color:white; padding:10px">
-    <label for="exampleInputPassword1" style="color:black; font-size:25px">Payment Date</label>
-    <input type="date" name="payment_date" class="form-control" id="exampleInputPassword1" placeholder="Purchase Date">
-  </div>
-  
-  <div class="d-grid gap-2 col-6 mx-auto" style="padding:10px">
-  <button class="btn btn-primary" type="submit">Add Payment</button>
-  
-  </div>
-  
-</form>
- 
-</div>    
- 
-         
+        <h3 style="font-size:xx-large;background-color: #1b1c1d;" class="ui inverted block center aligned header">
+            <i class="money bill alternate icon"></i>
+            Cashier
+        </h3>
+    
 
-        
-{% endblock %}    
+        <div style="background-color: #1b1c1d;" class="ui segment">
 
 
+            <div class="ui middle aligned center aligned grid">
+                <div class="column">
+                    <div style="color: white;" class="ui icon header">
+                        <i class="edit icon"></i>
+                        Add Payment
+                      </div>
+                  </h2>
+                  <form action="" method="POST" class="ui large form">
+                    <div class="ui stacked inverted segment">
+                      <div class="field">
+                        <div class="ui left icon input">
+                        <i class="cart arrow down icon"></i>
+                          <input type="number" name="purchase_id" placeholder="Enter Purchase Id" required>
+                        </div>
+                      </div>
+                      <div class="field">
+                        <div class="ui left icon input">
+                            <i class="rupee sign icon"></i>
+                          <input type="number" name="amount_paid" placeholder="Enter Amount Paid" required>
+                        </div>
+                      </div>
+                      <div class="field">
+                            <div class="ui input left icon">
+                              <i class="calendar icon"></i>
+                              <input type="date" name="payment_date" placeholder="Payment Date" required>
+                            </div>
+                      </div>
+                      <button type="submit" class="ui fluid large blue submit button">Add Payment</button>
+                    </div>
+                  </form>
+                  <br>
+                  <hr>
+                  <br>
+                  <div class="ui buttons">
+                    <a href="/" class="ui primary button">
+                      <i class="home icon"></i>
+                      Home</a>
+                    <div class="or"></div>
+                    <a href="/logout" class="ui red button">
+                      <i class="sign-out icon"></i>
+                      Logout</a>
+                  </div>
+                </div>
+              </div>
 
-   
+        </div>
+
+        <div class="ui inverted placeholder segment">
+            <div class="ui icon header">
+              <i class="code icon"></i>
+              Developed with ❤️ by Sai Jeevan P
+            </div>
+            <div class="inline">
+              <div class="ui inverted button"><a  href="https://github.com/SaiJeevanPuchakayala">Github</a></div>
+              <div class="ui inverted button"><a  href="https://www.linkedin.com/in/sai-jeevan-puchakayala/">LinkedIn</a></div>
+            </div>
+          </div>
+    </div>
+
+<script>
+    $('#example1').calendar({type: 'date',formatter: {
+    date: function (date, settings) {
+      if (!date) return '';
+      var day = date.getDate();
+      var month = date.getMonth() + 1;
+      var year = date.getFullYear();
+      return day + '-' + month + '-' + year;
+    }
+  }});
+  $('.ui.dropdown')
+  .dropdown()
+;
+</script>
+
+</body>
+</html>

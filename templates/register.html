@@ -1,50 +1,102 @@
-{% extends 'main.html' %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cashier</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>
+</head>
 
-<div class="container p-3 my-3 bg-dark text-white" style="width:35%;height:500%; padding:20px; border-radius: 25px;">
-
-<div class="banner">
-          <h1 style="text-align:center;font-size:30px">SIGN UP</h1>
-</div> 
-
-<img src="/static/images/register.jpg" width="100%"></img>
-<br>
-{% if message %}
-    <div class="msg" style="background-color:#F4F6F7 ;color:black; font-size:18px;text-align:center" >{{message}}</div>
-{% endif %}
-<form action="" method="POST">
-  <div class="form-group" style="background-color:#F4F6F7; padding:10px" >
-    <label for="exampleInputEmail1" style="color:black; font-size:25px">Username</label>
-    <input type="text" class="form-control" name="username" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Username">
-  </div>
-  <div class="form-group" style="background-color:#F4F6F7 ; padding:10px" >
-    <label for="exampleInputEmail1" style="color:black; font-size:25px">Email address</label>
-    <input type="email" class="form-control" name="email" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-  </div>
-  <div class="form-group" style="background-color:#F4F6F7 ; padding:10px" >
-    <label for="exampleInputPassword1" style="color:black; font-size:25px">Password</label>
-    <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-  </div>
-  
-  
-  
-  <div style="background-color:#F4F6F7 ; padding:10px; text-align:center">
-      <p style="color:black; font-size:20px;">By clicking register, you agree on our <a href="/terms">Terms and Conditions of our Retail store</a>.</p>
-  </div>
-  
-  <div style="background-color:#F4F6F7; padding:10px; text-align:center">
-      <p style="color:black; font-size:20px;">Already Registered? <a href="/login">Click here to login</a>.</p>
-  </div>
-  
-  <div class="d-grid gap-2 col-6 mx-auto" style="padding:10px">
-      <button class="btn btn-danger" type="submit">Sign Up</button>
-  
-  </div>
-</form>
- 
+<style>
+    body > .grid {
+      height: 100%;
+    }
+    .image {
+      margin-top: -100px;
+    }
+    .column {
+      max-width: 450px;
+    }
+</style>
+<body style="background-color: #5fafff;">
     
-</div>
-         
 
-        
-{% endblock %}    
+    <div style="background-color: #5fafff;" class="ui segment">
+
+      <a href="/intro"><h3 style="font-size:xx-large;background-color: #1b1c1d;" class="ui inverted block center aligned header">
+            <i class="money bill alternate icon"></i>
+            Cashier
+        </h3></a>
+    
+
+        <div style="background-color: #1b1c1d;" class="ui segment">
+
+
+            <div class="ui middle aligned center aligned grid">
+                <div class="column">
+                    <div style="color: white;" class="ui icon header">
+                        <i class="user icon"></i>
+                        Create Your Account
+                      </div>
+                  </h2>
+                  <form action="" method="POST" class="ui large form">
+                    <div class="ui stacked inverted segment">
+                      <div class="field">
+                        {% if message %}
+                        <div class="ui red message">{{message}}</div>
+                        {% endif %}
+                      </div>
+                      <div class="field">
+                        <div class="ui left icon input">
+                          <i class="user icon"></i>
+                          <input type="text" name="username" placeholder="Enter Username" required>
+                        </div>
+                      </div>
+                      <div class="field">
+                        <div class="ui left icon input">
+                          <i class="mail icon"></i>
+                          <input type="email" name="email" placeholder="Enter email" required>
+                        </div>
+                      </div>
+                      <div class="field">
+                        <div class="ui left icon input">
+                          <i class="lock icon"></i>
+                          <input type="password" name="password" placeholder="Password" required>
+                        </div>
+                      </div>
+
+                      <div class="field">
+                      <div class="ui checkbox">
+                        <input type="checkbox" name="example" required>
+                        <label>I agree all your <a href="/terms">Terms and Conditions</a>.</label>
+                      </div>
+                    </div>
+
+                      <button  type="submit" class="ui fluid large blue submit button">Register</button>
+                    </div>
+                  </form>
+              
+                  <div class="ui inverted message">
+                    Already have an Account <a href="/login">Login</a>
+                  </div>
+                </div>
+              </div>
+
+        </div>
+
+        <div class="ui inverted placeholder segment">
+            <div class="ui icon header">
+              <i class="code icon"></i>
+              Developed with ❤️ by Sai Jeevan P
+            </div>
+            <div class="inline">
+              <div class="ui inverted button"><a  href="https://github.com/SaiJeevanPuchakayala">Github</a></div>
+              <div class="ui inverted button"><a  href="https://www.linkedin.com/in/sai-jeevan-puchakayala/">LinkedIn</a></div>
+            </div>
+          </div>
+    </div>
+</body>
+</html>
