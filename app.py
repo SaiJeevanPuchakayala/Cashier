@@ -1,32 +1,38 @@
 from flask import Flask, render_template,request,flash,redirect,url_for,session
 from flask_mysqldb import MySQL
+import os
 import MySQLdb.cursors
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail, Message
-import config
 import re
 
 app = Flask(__name__)
 
-#connecting app to database
+
+db_name = os.environ.get("DB_NAME")
+db_password = os.environ.get("DB_PASSWORD")
+email = os.environ.get("ADMIN_MAIL_ID")
+password = os.environ.get("ADMIN_MAIL_PASSWORD")
+
+
 app.config['MYSQL_HOST'] = "remotemysql.com"
-app.config['MYSQL_USER'] = config.db_name
-app.config['MYSQL_PASSWORD'] = config.db_password
-app.config['MYSQL_DB'] = "tcYbqVYX2C"
+app.config['MYSQL_USER'] = db_name
+app.config['MYSQL_PASSWORD'] = db_password
+app.config['MYSQL_DB'] = db_name
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = config.email
-app.config['MAIL_PASSWORD'] = config.password
+app.config['MAIL_USERNAME'] = email
+app.config['MAIL_PASSWORD'] = password
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USE_TLS'] = False
 
 mysql = MySQL(app)
-app.secret_key = 'x' 
+app.secret_key = 'ecashier' 
 
-#password hasing
+
 bcrypt = Bcrypt(app)
 
-#for sending email
+
 mail = Mail(app)
 
 
@@ -85,7 +91,7 @@ def register():
             mysql.connection.commit()
             message="Your account has been created! You are now able to log in"
             
-            msg = Message('Registration Successfull for E Cashier',sender=config.email,
+            msg = Message('Registration Successfull for E Cashier',sender=email,
                 recipients=[email]
             )
             msg.body = f'''
@@ -156,7 +162,7 @@ def addpurchase():
                     user_details = cursor.fetchone()
                     recipient = user_details[0]
                     username = user_details[1]
-                    msg = Message('Pending Payment Alert!!!',sender=config.email,
+                    msg = Message('Pending Payment Alert!!!',sender=email,
                     recipients=[recipient])
                     msg.body = f'''
                     Hey {username}, we hope you are doing well.
@@ -277,7 +283,7 @@ def addpayment():
                 recipient = user[0]
                 username = user[1]
                 pending_amount = price-tot_amount_paid
-                msg = Message('Payment Detail',sender=config.email,
+                msg = Message('Payment Detail',sender=email,
                 recipients=[recipient])
                 msg.body = f'''
                     Hey {username}, we hope you are doing well.
@@ -360,7 +366,7 @@ def pendingemail(id):
             cursor.execute("Select item_name, price, purchase_date, amount_paid FROM Purchase WHERE user_id = %s",[id])
             purchase = cursor.fetchone()
             pending_amount = int(purchase[1]) - int(purchase[3])
-            msg = Message('Pending Payment Alert!!!',sender=config.email,
+            msg = Message('Pending Payment Alert!!!',sender=email,
             recipients=[recipient])
             msg.body = f'''
                 Hey {recipient_name}, we hope you are doing well.
