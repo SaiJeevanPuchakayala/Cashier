@@ -8,7 +8,6 @@ db_password = "QCUECMqs6q"
 email = "ecashier2021@gmail.com"
 password = "Cashier@2021"
 
-
 # Admin Credentails
 # xebip78501@hyprhost.com
 # cashieradmin
