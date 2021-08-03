@@ -10,13 +10,13 @@ app = Flask(__name__)
 
 #connecting app to database
 app.config['MYSQL_HOST'] = "remotemysql.com"
-app.config['MYSQL_USER'] = "Gmvi0rRnzg"
-app.config['MYSQL_PASSWORD'] = "MBH8SSrAiN"
-app.config['MYSQL_DB'] = "Gmvi0rRnzg"
+app.config['MYSQL_USER'] = config.db_name
+app.config['MYSQL_PASSWORD'] = config.db_password
+app.config['MYSQL_DB'] = "tcYbqVYX2C"
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = 'retailerpaybook@gmail.com'
-app.config['MAIL_PASSWORD'] = 'adminbuildathon'
+app.config['MAIL_USERNAME'] = config.email
+app.config['MAIL_PASSWORD'] = config.password
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USE_TLS'] = False
 
@@ -72,7 +72,7 @@ def register():
         cursor = mysql.connection.cursor()
         cursor.execute('SELECT * FROM Users WHERE email = % s', [email])
         account = cursor.fetchone()
-        print(account)
+        ##print(account)
         if account:
             message="Account already exists...Try with different email address"
         elif not re.match(r'[A-Za-z0-9]+', username):
@@ -89,8 +89,8 @@ def register():
                 recipients=[email]
             )
             msg.body = f'''
-            Hello {username}, Welcome to Digital Payment World!!!
-            Your account in Digital Payment Book was created Successfully.
+            Hello {username}, Welcome to E Cashier 2021!!!
+            Your account in E Cashier 2021 was created Successfully.
             You can now login into your account and see your purchase history, payment details and 
             pending payments.Thankyou.
             '''
@@ -109,7 +109,7 @@ def login():
         cursor = mysql.connection.cursor()
         cursor.execute('SELECT * FROM Users WHERE email = % s',[email])
         user = cursor.fetchone()
-        print(user)
+        ##print(user)
         
         if user and bcrypt.check_password_hash(user[3],password):
             session['user_id'] = user[0]
@@ -236,12 +236,12 @@ def displaypurchase():
             cursor = mysql.connection.cursor()
             cursor.execute("SELECT purchase_id,user_id,item_name, price, amount_paid, purchase_date  FROM Purchase WHERE user_id = % s",[session['user_id']])
             purchase_details = cursor.fetchall()
-            print(purchase_details)
+            #print(purchase_details)
         else:
             cursor = mysql.connection.cursor()
             cursor.execute("SELECT purchase_id,user_id,item_name, price, amount_paid, purchase_date FROM Purchase")
             purchase_details = cursor.fetchall()
-            print(purchase_details)
+            #print(purchase_details)
     
    
         return render_template('displaypurchase.html',purchase_details=purchase_details,username=session['username'])
@@ -265,7 +265,7 @@ def addpayment():
                 mysql.connection.commit()
                 cursor.execute("SELECT item_name, price, amount_paid, user_id, purchase_date FROM Purchase WHERE purchase_id = %s",[purchase_id])
                 details = cursor.fetchone()
-                print(details)
+                #print(details)
                 item = details[0]
                 price = details[1]
                 tot_amount_paid = details[2]
@@ -273,7 +273,7 @@ def addpayment():
                 purchase_date = details[4]
                 cursor.execute("SELECT email, username FROM Users WHERE user_id = %s",[userid])
                 user = cursor.fetchone()
-                print(user)
+                #print(user)
                 recipient = user[0]
                 username = user[1]
                 pending_amount = price-tot_amount_paid
@@ -312,12 +312,12 @@ def pendingpayments():
             cursor = mysql.connection.cursor()
             cursor.execute("SELECT purchase_id,user_id,item_name, price, amount_paid, purchase_date FROM Purchase WHERE amount_paid<price AND user_id = % s",[session['user_id']])
             pending_payments = cursor.fetchall()
-            print('Pending Payments : ',pending_payments)
+            #print('Pending Payments : ',pending_payments)
         else:
             cursor = mysql.connection.cursor()
             cursor.execute("SELECT purchase_id,user_id,item_name, price, amount_paid, purchase_date FROM Purchase WHERE amount_paid<price")
             pending_payments = cursor.fetchall()
-            print('Pending Payments : ',pending_payments)
+            #print('Pending Payments : ',pending_payments)
         
         
         return render_template('pending_payments.html',pending_payments=pending_payments,username=session['username'],role=session['is_retailer'])
@@ -392,4 +392,4 @@ def terms():
 
 
 if __name__ == '__main__':
-    app.run(port="8080")
+    app.run(debug=True,port="8080")

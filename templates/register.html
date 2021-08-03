@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cashier</title>
+    <title>E Cashier</title>
+    <link rel="icon" href="{{ url_for('static', filename = 'images/icon.ico') }}" type="image/icon type">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>
@@ -28,7 +29,7 @@
 
       <a href="/intro"><h3 style="font-size:xx-large;background-color: #1b1c1d;" class="ui inverted block center aligned header">
             <i class="money bill alternate icon"></i>
-            Cashier
+            E Cashier
         </h3></a>
     
 
@@ -75,7 +76,7 @@
                       </div>
                     </div>
 
-                      <button  type="submit" class="ui fluid large blue submit button">Register</button>
+                      <button onclick="myFunction()" type="submit" class="ui fluid large blue submit button">Register</button>
                     </div>
                   </form>
               
@@ -98,5 +99,12 @@
             </div>
           </div>
     </div>
+
+<script>
+  function myFunction() {
+    alert("Your Account Is Created Successfully!");
+  }
+</script>
+
 </body>
 </html>
