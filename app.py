@@ -85,7 +85,7 @@ def register():
             mysql.connection.commit()
             message="Your account has been created! You are now able to log in"
             
-            msg = Message('Registration Successfull for Digital Payment Book',sender=config.email,
+            msg = Message('Registration Successfull for E Cashier',sender=config.email,
                 recipients=[email]
             )
             msg.body = f'''
