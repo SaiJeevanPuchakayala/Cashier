@@ -15,4 +15,5 @@
 
 ## Have a look at Admin Panel Using Credentials Below
 **Email:** xebip78501@hyprhost.com
+
 **Password:** cashieradmin
