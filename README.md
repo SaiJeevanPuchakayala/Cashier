@@ -13,7 +13,7 @@
 
 **Database:** [MySQL](https://remotemysql.com/)
 
-## Have a look at Admin Panel Using Credentials Below
+## Have a look at Admin Panel By SigningIn Using Credentials Below
 **Email:** xebip78501@hyprhost.com
 
 **Password:** cashieradmin
