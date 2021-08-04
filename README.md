@@ -12,3 +12,7 @@
 **Server:** [Flask](https://flask.palletsprojects.com/en/2.0.x/)
 
 **Database:** [MySQL](https://remotemysql.com/)
+
+## Have a look at Admin Panel Using Credentials Below
+**Email:** xebip78501@hyprhost.com
+**Password:** cashieradmin
