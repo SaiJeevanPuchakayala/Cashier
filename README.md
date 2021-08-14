@@ -7,9 +7,9 @@
 
 ## Tech Stack
 
-**Client:** [semantic-ui](https://semantic-ui.com/)
+**Frontend:** [semantic-ui](https://semantic-ui.com/)
 
-**Server:** [Flask](https://flask.palletsprojects.com/en/2.0.x/)
+**Backend:** [Flask](https://flask.palletsprojects.com/en/2.0.x/)
 
 **Database:** [MySQL](https://remotemysql.com/)
 
