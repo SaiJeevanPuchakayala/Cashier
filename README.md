@@ -17,3 +17,32 @@
 **Email:** xebip78501@hyprhost.com
 
 **Password:** cashieradmin
+
+## Environment Variables
+To run this project, you will need to add the following variables to your app.py
+
+```bash
+db_name = "Your DB_NAME"
+db_password = "Your DB_PASSWORD"
+email = "Your MAIL_ID"
+password = "Your MAIL_ID_PASSWORD"
+```
+
+
+### Run Locally
+Clone the project
+
+```bash
+>_ git clone https://github.com/SaiJeevanPuchakayala/Cashier.git
+```
+
+Install dependencies
+
+```bash
+ >_ pip install -r requirements.txt 
+```
+
+Start the server
+```bash
+>_ python app.py 
+```
