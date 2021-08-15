@@ -355,8 +355,7 @@ def contact():
     if 'loggedin' in session:
         if session['is_retailer'] == 0:
             return render_template('contact.html',username=session['username'])
-    else:
-        return redirect(url_for('intro'))
+    return redirect(url_for('intro'))
 
 @app.route('/pendingemail/<int:id>')
 def pendingemail(id):
@@ -397,6 +396,8 @@ def pendingemail(id):
         
 @app.route('/intro')
 def intro():
+    if 'loggedin' in session:
+        return redirect(url_for('home'))
     return render_template('intro.html')
 
 @app.route('/terms')
