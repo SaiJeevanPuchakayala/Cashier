@@ -405,5 +405,12 @@ def terms():
     return render_template('terms.html')
 
 
+@app.errorhandler(404)
+def page_not_found(e):
+    if 'loggedin' in session:
+        return redirect(url_for('home'))
+    return render_template('intro.html')
+
+
 if __name__ == '__main__':
     app.run(debug=True,port="8080")
