@@ -70,6 +70,8 @@ def home():
 @app.route('/register', methods=['POST','GET'])
 def register():
     message=None
+    if 'loggedin' in session:
+        return redirect(url_for('home'))
     if request.method == 'POST':
         username = request.form['username']
         email = request.form['email']
@@ -78,7 +80,6 @@ def register():
         cursor = mysql.connection.cursor()
         cursor.execute('SELECT * FROM Users WHERE email = % s', [email])
         account = cursor.fetchone()
-        ##print(account)
         if account:
             message="Account already exists...Try with different email address"
         elif not re.match(r'[A-Za-z0-9]+', username):
@@ -94,11 +95,15 @@ def register():
             msg = Message('Registration Successfull for E Cashier',sender=email,
                 recipients=[email]
             )
-            msg.body = f'''
-            Hello {username}, Welcome to E Cashier 2021!!!
+            msg.body = f'''Hello {username}, Welcome to E Cashier 2021!!!.
+
             Your account in E Cashier 2021 was created Successfully.
+
             You can now login into your account and see your purchase history, payment details and 
-            pending payments.Thankyou.
+            pending payments.
+            
+            
+            Thankyou!!!.
             '''
             mail.send(msg)
             return redirect(url_for('login'))
@@ -109,13 +114,14 @@ def register():
 @app.route('/login',methods=['POST','GET'])
 def login():
     message=None
+    if 'loggedin' in session:
+        return redirect(url_for('home'))
     if request.method =='POST':
         email = request.form['email']
         password = request.form['password']
         cursor = mysql.connection.cursor()
         cursor.execute('SELECT * FROM Users WHERE email = % s',[email])
         user = cursor.fetchone()
-        ##print(user)
         
         if user and bcrypt.check_password_hash(user[3],password):
             session['user_id'] = user[0]
@@ -164,11 +170,11 @@ def addpurchase():
                     username = user_details[1]
                     msg = Message('Pending Payment Alert!!!',sender=email,
                     recipients=[recipient])
-                    msg.body = f'''
-                    Hey {username}, we hope you are doing well.
+                    msg.body = f'''Hey {username}, we hope you are doing well.
                     The payment is still pending for the purchase {item} made on {purchase_date}.
-                    We have given long due time to you to pay the pending payment. So pay the pending payment
-                    within two days without fail. 
+
+                    We have given long due time to you to pay the pending payment. So pay the pending payment within two days without fail. 
+
                     Pending Payment Details :
                         Item : {item}
                         Price : {price}
@@ -242,12 +248,10 @@ def displaypurchase():
             cursor = mysql.connection.cursor()
             cursor.execute("SELECT purchase_id,user_id,item_name, price, amount_paid, purchase_date  FROM Purchase WHERE user_id = % s",[session['user_id']])
             purchase_details = cursor.fetchall()
-            #print(purchase_details)
         else:
             cursor = mysql.connection.cursor()
             cursor.execute("SELECT purchase_id,user_id,item_name, price, amount_paid, purchase_date FROM Purchase")
             purchase_details = cursor.fetchall()
-            #print(purchase_details)
     
    
         return render_template('displaypurchase.html',purchase_details=purchase_details,username=session['username'])
@@ -271,7 +275,6 @@ def addpayment():
                 mysql.connection.commit()
                 cursor.execute("SELECT item_name, price, amount_paid, user_id, purchase_date FROM Purchase WHERE purchase_id = %s",[purchase_id])
                 details = cursor.fetchone()
-                #print(details)
                 item = details[0]
                 price = details[1]
                 tot_amount_paid = details[2]
@@ -279,7 +282,6 @@ def addpayment():
                 purchase_date = details[4]
                 cursor.execute("SELECT email, username FROM Users WHERE user_id = %s",[userid])
                 user = cursor.fetchone()
-                #print(user)
                 recipient = user[0]
                 username = user[1]
                 pending_amount = price-tot_amount_paid
@@ -288,12 +290,13 @@ def addpayment():
                 msg.body = f'''
                     Hey {username}, we hope you are doing well.
                     You made a payment on {payment_date} for the purchase item - {item} purchased on {purchase_date}.
+
                     Please pay the balance pending payments as soon as possible. If you paid all the payments, then leave it.
                     
                     Payment Details:
-                    Item : {item}
-                    Amount Paid : {amountpaid}
-                    Payment Date : {payment_date}
+                        Item : {item}
+                        Amount Paid : {amountpaid}
+                        Payment Date : {payment_date}
                     
                     Pending Payment Details :
                         Item : {item}
@@ -302,7 +305,10 @@ def addpayment():
                         Amount Paid : {tot_amount_paid}
                         Pending Amount : {pending_amount}
                         
-                                                Thankyou.
+
+
+
+                        Thankyou!!!.
                     '''
                    
                 mail.send(msg)
@@ -318,12 +324,10 @@ def pendingpayments():
             cursor = mysql.connection.cursor()
             cursor.execute("SELECT purchase_id,user_id,item_name, price, amount_paid, purchase_date FROM Purchase WHERE amount_paid<price AND user_id = % s",[session['user_id']])
             pending_payments = cursor.fetchall()
-            #print('Pending Payments : ',pending_payments)
         else:
             cursor = mysql.connection.cursor()
             cursor.execute("SELECT purchase_id,user_id,item_name, price, amount_paid, purchase_date FROM Purchase WHERE amount_paid<price")
             pending_payments = cursor.fetchall()
-            #print('Pending Payments : ',pending_payments)
         
         
         return render_template('pending_payments.html',pending_payments=pending_payments,username=session['username'],role=session['is_retailer'])
@@ -368,11 +372,12 @@ def pendingemail(id):
             pending_amount = int(purchase[1]) - int(purchase[3])
             msg = Message('Pending Payment Alert!!!',sender=email,
             recipients=[recipient])
-            msg.body = f'''
-                Hey {recipient_name}, we hope you are doing well.
+            msg.body = f'''Hey {recipient_name}, we hope you are doing well.
+
                 The payment is still pending for the purchase item - {purchase[0]} made on {purchase[2]}.
-                We have given long due time to you to pay the pending payment. So pay the pending payment
-                within two days without fail. 
+                We have given long due time to you to pay the pending payment.
+                So pay the pending payment within two days without fail.
+
                 Pending Payment Details :
                     Item : {purchase[0]}
                     Price : {purchase[1]}
@@ -380,7 +385,9 @@ def pendingemail(id):
                     Amount Paid : {purchase[3]}
                     Pending Amount : {pending_amount}
                     
-                                            Thankyou.
+
+
+                    Thankyou!!!.
                 '''
             
             mail.send(msg)
