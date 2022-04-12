@@ -9,10 +9,10 @@ import re
 app = Flask(__name__)
 
 
-db_name = os.environ.get("DB_NAME")
-db_password = os.environ.get("DB_PASSWORD")
-email = os.environ.get("ADMIN_MAIL_ID")
-password = os.environ.get("ADMIN_MAIL_PASSWORD")
+db_name = "hkJy4ffQaC"
+db_password = "aE969OzCgR"
+email = "ecashier2021@gmail.com"
+password = "Cashier@2021"
 
 
 app.config['MYSQL_HOST'] = "remotemysql.com"
