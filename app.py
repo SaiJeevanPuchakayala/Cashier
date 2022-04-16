@@ -1,9 +1,8 @@
-from flask import Flask, render_template,request,flash,redirect,url_for,session
+from flask import Flask, render_template,request,redirect,url_for,session
 from flask_mysqldb import MySQL
+from messageService import send_sms
 import os
-import MySQLdb.cursors
 from flask_bcrypt import Bcrypt
-from flask_mail import Mail, Message
 import re
 
 app = Flask(__name__)
@@ -33,7 +32,7 @@ app.secret_key = 'ecashier'
 bcrypt = Bcrypt(app)
 
 
-mail = Mail(app)
+
 
 
 @app.route('/')
@@ -75,39 +74,33 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         email = request.form['email']
-        password = request.form['password']
-        
-        cursor = mysql.connection.cursor()
-        cursor.execute('SELECT * FROM Users WHERE email = % s', [email])
-        account = cursor.fetchone()
-        if account:
-            message="Account already exists...Try with different email address"
-        elif not re.match(r'[A-Za-z0-9]+', username):
-            message = 'Username must contain only characters and numbers.'
-        else:
-            hash_password = bcrypt.generate_password_hash(password).decode('utf-8')
-            x = [username,email,hash_password]
+        pnumber = request.form['pnumber']
+        password1 = request.form['password1']
+        password2 = request.form['password2']
+        userWallet = request.form['walletAmount']
+        if password1 == password2:
+
             cursor = mysql.connection.cursor()
-            cursor.execute('INSERT INTO Users(username,email,password) VALUES(% s,% s,% s)',(username,email,hash_password))
-            mysql.connection.commit()
-            message="Your account has been created! You are now able to log in"
-            
-            msg = Message('Registration Successfull for E Cashier',sender=email,
-                recipients=[email]
-            )
-            msg.body = f'''Hello {username}, Welcome to E Cashier 2021!!!.
+            cursor.execute('SELECT * FROM Users WHERE email = % s', [email])
+            account = cursor.fetchone()
+            if account:
+                message="Account already exists...Try with different email address"
+            elif not re.match(r'[A-Za-z0-9]+', username):
+                message = 'Username must contain only characters and numbers.'
+            else:
+                hash_password = bcrypt.generate_password_hash(password1).decode('utf-8')
+                cursor = mysql.connection.cursor()
+                cursor.execute('INSERT INTO Users(username,email,phonenumber,password,wallet) VALUES(% s,% s,% s,% s,% s)',(username,email,pnumber,hash_password,userWallet))
+                mysql.connection.commit()
 
-            Your account in E Cashier 2021 was created Successfully.
 
-            You can now login into your account and see your purchase history, payment details and 
-            pending payments.
-            
-            
-            Thankyou!!!.
-            '''
-            mail.send(msg)
-            return redirect(url_for('login'))
+                msg = f'''Registration Successful! Hello {username}, Welcome to E Cashier!. Login to your account and see your purchase history, payment details, and pending payments.'''
+                
+                send_sms(pnumber,msg)
+                return redirect(url_for('login'))
         
+        else:
+            message = "Passwords Do Not Match!"
         
     return render_template('register.html',message=message)
 
@@ -164,28 +157,25 @@ def addpurchase():
                 mysql.connection.commit()
                 if pending_amount!=0:
                     
-                    cursor.execute("SELECT email, username FROM Users WHERE user_id = %s",[customer])
+                    cursor.execute("SELECT phonenumber, username FROM Users WHERE user_id = %s",[customer])
                     user_details = cursor.fetchone()
                     recipient = user_details[0]
                     username = user_details[1]
-                    msg = Message('Pending Payment Alert!!!',sender=email,
-                    recipients=[recipient])
-                    msg.body = f'''Hey {username}, we hope you are doing well.
-                    The payment is still pending for the purchase {item} made on {purchase_date}.
 
-                    We have given long due time to you to pay the pending payment. So pay the pending payment within two days without fail. 
 
+                    msg= f'''Pending Payment Alert! Hey {username}, we hope you are doing well.
                     Pending Payment Details :
                         Item : {item}
                         Price : {price}
                         Purchase Date : {purchase_date}
                         Amount Paid : {amount_paid}
                         Pending Amount : {pending_amount}
-                        
-                                                Thankyou.
+                        Thankyou.
                     '''
                     
-                    mail.send(msg)
+                    send_sms(recipient,msg)
+
+
                 return redirect(url_for('home'))
             
         
@@ -280,19 +270,14 @@ def addpayment():
                 tot_amount_paid = details[2]
                 userid = details[3]
                 purchase_date = details[4]
-                cursor.execute("SELECT email, username FROM Users WHERE user_id = %s",[userid])
+                cursor.execute("SELECT phonenumber, username FROM Users WHERE user_id = %s",[userid])
                 user = cursor.fetchone()
                 recipient = user[0]
                 username = user[1]
                 pending_amount = price-tot_amount_paid
-                msg = Message('Payment Detail',sender=email,
-                recipients=[recipient])
-                msg.body = f'''
-                    Hey {username}, we hope you are doing well.
-                    You made a payment on {payment_date} for the purchase item - {item} purchased on {purchase_date}.
 
-                    Please pay the balance pending payments as soon as possible. If you paid all the payments, then leave it.
-                    
+
+                msg = f'''Payment Detail! Hey {username}, we hope you are doing well.
                     Payment Details:
                         Item : {item}
                         Amount Paid : {amountpaid}
@@ -304,14 +289,9 @@ def addpayment():
                         Purchase Date : {purchase_date}
                         Amount Paid : {tot_amount_paid}
                         Pending Amount : {pending_amount}
-                        
-
-
-
-                        Thankyou!!!.
                     '''
                    
-                mail.send(msg)
+                send_sms(recipient,msg)
                 return redirect(url_for('home'))
         return render_template('addpayment.html')
     else:
@@ -362,34 +342,24 @@ def pendingemail(id):
     if 'loggedin' in session:
         if session['is_retailer'] == 1:
             cursor = mysql.connection.cursor()
-            cursor.execute("SELECT email, username FROM Users WHERE user_id = %s",[id])
+            cursor.execute("SELECT phonenumber, username FROM Users WHERE user_id = %s",[id])
             details = cursor.fetchone()
             recipient = details[0]
             recipient_name = details[1]
             cursor.execute("Select item_name, price, purchase_date, amount_paid FROM Purchase WHERE user_id = %s",[id])
             purchase = cursor.fetchone()
             pending_amount = int(purchase[1]) - int(purchase[3])
-            msg = Message('Pending Payment Alert!!!',sender=email,
-            recipients=[recipient])
-            msg.body = f'''Hey {recipient_name}, we hope you are doing well.
 
-                The payment is still pending for the purchase item - {purchase[0]} made on {purchase[2]}.
-                We have given long due time to you to pay the pending payment.
-                So pay the pending payment within two days without fail.
-
+            msg = f'''Pending Payment Alert!!! Hey {recipient_name}, we hope you are doing well. The payment is still pending for the purchase item - {purchase[0]} made on {purchase[2]}. Pay the pending payment within two days without fail.
                 Pending Payment Details :
                     Item : {purchase[0]}
                     Price : {purchase[1]}
                     Purchase Date : {purchase[2]}
                     Amount Paid : {purchase[3]}
                     Pending Amount : {pending_amount}
-                    
-
-
-                    Thankyou!!!.
                 '''
             
-            mail.send(msg)
+            send_sms(recipient,msg)
         return redirect(url_for('pendingpayments'))
     else:
         redirect(url_for('intro'))
