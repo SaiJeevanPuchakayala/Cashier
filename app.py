@@ -163,15 +163,7 @@ def addpurchase():
                     username = user_details[1]
 
 
-                    msg= f'''Pending Payment Alert! Hey {username}, we hope you are doing well.
-                    Pending Payment Details :
-                        Item : {item}
-                        Price : {price}
-                        Purchase Date : {purchase_date}
-                        Amount Paid : {amount_paid}
-                        Pending Amount : {pending_amount}
-                        Thankyou.
-                    '''
+                    msg= f'''Pending Payment Alert! Hey {username}, we hope you are doing well. Pending Payment Details :Item :{item}, Price: {price}, Purchase Date: {purchase_date}, Amount Paid: {amount_paid}, Pending Amount: {pending_amount}'''
                     
                     send_sms(recipient,msg)
 
@@ -277,19 +269,7 @@ def addpayment():
                 pending_amount = price-tot_amount_paid
 
 
-                msg = f'''Payment Detail! Hey {username}, we hope you are doing well.
-                    Payment Details:
-                        Item : {item}
-                        Amount Paid : {amountpaid}
-                        Payment Date : {payment_date}
-                    
-                    Pending Payment Details :
-                        Item : {item}
-                        Price : {price}
-                        Purchase Date : {purchase_date}
-                        Amount Paid : {tot_amount_paid}
-                        Pending Amount : {pending_amount}
-                    '''
+                msg = f'''Payment Detail! Hey {username}, we hope you are doing well. Payment Details: Item : {item}, Amount Paid: {amountpaid}, Payment Date: {payment_date} / Pending Payment Details : Item : {item}, Price: {price}, Purchase Date: {purchase_date}, Amount Paid: {tot_amount_paid}, Pending Amount: {pending_amount}'''
                    
                 send_sms(recipient,msg)
                 return redirect(url_for('home'))
@@ -350,14 +330,7 @@ def pendingemail(id):
             purchase = cursor.fetchone()
             pending_amount = int(purchase[1]) - int(purchase[3])
 
-            msg = f'''Pending Payment Alert!!! Hey {recipient_name}, we hope you are doing well. The payment is still pending for the purchase item - {purchase[0]} made on {purchase[2]}. Pay the pending payment within two days without fail.
-                Pending Payment Details :
-                    Item : {purchase[0]}
-                    Price : {purchase[1]}
-                    Purchase Date : {purchase[2]}
-                    Amount Paid : {purchase[3]}
-                    Pending Amount : {pending_amount}
-                '''
+            msg = f'''Pending Payment Alert!!! Hey {recipient_name}, we hope you are doing well. The payment is still pending for the purchase item - {purchase[0]} made on {purchase[2]}. Pay the pending payment within two days without fail. Pending Payment Details :Item: {purchase[0]}, Price: {purchase[1]}, Purchase Date: {purchase[2]}, Amount Paid: {purchase[3]}, Pending Amount: {pending_amount}'''
             
             send_sms(recipient,msg)
         return redirect(url_for('pendingpayments'))
