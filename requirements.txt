@@ -1,6 +1,5 @@
 Flask
 requests
-json
 mysql-connector-python
 flask_mysqldb
 flask_bcrypt
