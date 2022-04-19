@@ -2,7 +2,6 @@ from flask import Flask, render_template,request,redirect,url_for,session
 from flask_mysqldb import MySQL
 from messageService import send_sms
 import os
-from flask_bcrypt import Bcrypt
 import re
 
 app = Flask(__name__)
@@ -29,7 +28,6 @@ mysql = MySQL(app)
 app.secret_key = 'ecashier' 
 
 
-bcrypt = Bcrypt(app)
 
 
 
@@ -40,23 +38,23 @@ def home():
     if 'loggedin' in session:
         if session['is_retailer'] == 0:
             cursor = mysql.connection.cursor()
-            cursor.execute("SELECT purchase_id,user_id,item_name, price, amount_paid, purchase_date  FROM Purchase WHERE user_id = % s",[session['user_id']])
+            cursor.execute("SELECT purchase_id,user_id,item_name, price, amount_paid, purchase_date  FROM Purchases WHERE user_id = % s",[session['user_id']])
             purchase_details = cursor.fetchall()
-            cursor.execute("SELECT COUNT(*) FROM Purchase WHERE user_id = %s",[session['user_id']])
+            cursor.execute("SELECT COUNT(*) FROM Purchases WHERE user_id = %s",[session['user_id']])
             purchase_count = cursor.fetchone()[0]
-            cursor.execute("SELECT COUNT(*) FROM Payments WHERE purchase_id IN (SELECT purchase_id FROM Purchase WHERE user_id = % s)",[session['user_id']])
+            cursor.execute("SELECT COUNT(*) FROM Payments WHERE purchase_id IN (SELECT purchase_id FROM Purchases WHERE user_id = % s)",[session['user_id']])
             payment_count = cursor.fetchone()[0]
-            cursor.execute("SELECT COUNT(*) FROM Purchase WHERE amount_paid<price AND user_id = % s",[session['user_id']])
+            cursor.execute("SELECT COUNT(*) FROM Purchases WHERE amount_paid<price AND user_id = % s",[session['user_id']])
             pending_count = cursor.fetchone()[0]
         else:
             cursor = mysql.connection.cursor()
-            cursor.execute("SELECT purchase_id,user_id,item_name, price, amount_paid, purchase_date FROM Purchase")
+            cursor.execute("SELECT purchase_id,user_id,item_name, price, amount_paid, purchase_date FROM Purchases")
             purchase_details = cursor.fetchall()
-            cursor.execute("SELECT COUNT(*) FROM Purchase")
+            cursor.execute("SELECT COUNT(*) FROM Purchases")
             purchase_count = cursor.fetchone()[0]
             cursor.execute("SELECT COUNT(*) FROM Payments")
             payment_count = cursor.fetchone()[0]
-            cursor.execute("SELECT COUNT(*) FROM Purchase WHERE amount_paid<price")
+            cursor.execute("SELECT COUNT(*) FROM Purchases WHERE amount_paid<price")
             pending_count = cursor.fetchone()[0]
             
         return render_template('home.html',purchase_details=purchase_details,username=session['username'],role=session['is_retailer'],purchase_count=purchase_count,payment_count=payment_count,pending_count=pending_count)
@@ -78,26 +76,32 @@ def register():
         password1 = request.form['password1']
         password2 = request.form['password2']
         userWallet = request.form['walletAmount']
+
         if password1 == password2:
 
-            cursor = mysql.connection.cursor()
-            cursor.execute('SELECT * FROM Users WHERE email = % s', [email])
-            account = cursor.fetchone()
-            if account:
-                message="Account already exists...Try with different email address"
-            elif not re.match(r'[A-Za-z0-9]+', username):
-                message = 'Username must contain only characters and numbers.'
-            else:
-                hash_password = bcrypt.generate_password_hash(password1).decode('utf-8')
-                cursor = mysql.connection.cursor()
-                cursor.execute('INSERT INTO Users(username,email,phonenumber,password,wallet) VALUES(% s,% s,% s,% s,% s)',(username,email,pnumber,hash_password,userWallet))
-                mysql.connection.commit()
-
-
-                msg = f'''Registration Successful! Hello {username}, Welcome to E Cashier!. Login to your account and see your purchase history, payment details, and pending payments.'''
+            if int(userWallet) >= 1000:
                 
-                send_sms(pnumber,msg)
-                return redirect(url_for('login'))
+
+                cursor = mysql.connection.cursor()
+                cursor.execute('SELECT * FROM Users WHERE email = % s', [email])
+                account = cursor.fetchone()
+                if account:
+                    message="Account already exists...Try with different email address"
+                elif not re.match(r'[A-Za-z0-9]+', username):
+                    message = 'Username must contain only characters and numbers.'
+                else:
+                    cursor = mysql.connection.cursor()
+                    cursor.execute('INSERT INTO Users(userid,username,email,phonenumber,password,wallet) VALUES(UUID(),% s,% s,% s,% s,% s)',(username,email,pnumber,password1,userWallet))
+                    mysql.connection.commit()
+
+
+                    msg = f'''Registration Successful! Hello {username}, Welcome to E Cashier!. Login to your account and see your Purchases history, payment details, and pending payments.'''
+                    
+                    send_sms(pnumber,msg)
+                    return redirect(url_for('login'))
+
+            else:
+                message = "Wallet Amount Should be Minimum of 1000 Rupees."
         
         else:
             message = "Passwords Do Not Match!"
@@ -116,10 +120,10 @@ def login():
         cursor.execute('SELECT * FROM Users WHERE email = % s',[email])
         user = cursor.fetchone()
         
-        if user and bcrypt.check_password_hash(user[3],password):
+        if user and (user[4] == password):
             session['user_id'] = user[0]
             session['username'] = user[1]
-            session['is_retailer'] = user[4]
+            session['is_retailer'] = user[5]
             session['email'] = user[2]
             session['loggedin'] = True
             return redirect(url_for('home'))
@@ -153,22 +157,20 @@ def addpurchase():
                 amount_paid = request.form['amount_paid']
                 pending_amount = int(price) - int(amount_paid)
                 cursor = mysql.connection.cursor()
-                cursor.execute("INSERT INTO Purchase(user_id,item_name,price,purchase_date,amount_paid) VALUES(% s,% s,% s,% s, % s)",[customer,item,price,purchase_date,amount_paid])
+                cursor.execute("INSERT INTO Purchases (user_id,item_name,price,purchase_date,amount_paid) VALUES(% s,% s,% s,% s, % s)",[customer,item,price,purchase_date,amount_paid])
                 mysql.connection.commit()
                 if pending_amount!=0:
                     
-                    cursor.execute("SELECT phonenumber, username FROM Users WHERE user_id = %s",[customer])
+                    cursor.execute("SELECT phonenumber, username FROM Users WHERE userid = %s",[customer])
                     user_details = cursor.fetchone()
                     recipient = user_details[0]
                     username = user_details[1]
 
 
-                    msg= f'''Pending Payment Alert! Hey {username}, we hope you are doing well. Pending Payment Details :Item :{item}, Price: {price}, Purchase Date: {purchase_date}, Amount Paid: {amount_paid}, Pending Amount: {pending_amount}'''
+                    msg= f'''Pending Payment Alert! Hey {username}, we hope you are doing well. Pending Payment Details :Item :{item}, Price: {price}, Purchases Date: {purchase_date}, Amount Paid: {amount_paid}, Pending Amount: {pending_amount}'''
                     
                     send_sms(recipient,msg)
 
-
-                return redirect(url_for('home'))
             
         
             cursor = mysql.connection.cursor()
@@ -195,12 +197,12 @@ def updatepurchase(id):
                 purchase_date = request.form['purchase_date']
                 amount_paid = request.form['amount_paid']
                 cursor = mysql.connection.cursor()
-                cursor.execute("UPDATE Purchase SET item_name = %s, price = %s, amount_paid = %s, purchase_date = %s WHERE purchase_id = %s ",[item,price,amount_paid,purchase_date,id])
+                cursor.execute("UPDATE Purchases SET item_name = %s, price = %s, amount_paid = %s, purchase_date = %s WHERE purchase_id = %s ",[item,price,amount_paid,purchase_date,id])
                 mysql.connection.commit()
                 return redirect(url_for('home'))
             
             cursor = mysql.connection.cursor()
-            cursor.execute("SELECT * FROM Purchase WHERE purchase_id = %s",[id])
+            cursor.execute("SELECT * FROM Purchases WHERE purchase_id = %s",[id])
             purchase = cursor.fetchone()
             
             
@@ -214,7 +216,7 @@ def deletepurchase(id):
     if 'loggedin' in session:
         if session['is_retailer']==1:
             cursor = mysql.connection.cursor()
-            cursor.execute("DELETE FROM Purchase WHERE purchase_id = %s",[id])
+            cursor.execute("DELETE FROM Purchases WHERE purchase_id = %s",[id])
             cursor.execute("DELETE FROM Payments WHERE purchase_id  = %s",[id])
             mysql.connection.commit()
             return redirect(url_for('home'))
@@ -228,11 +230,11 @@ def displaypurchase():
     if 'loggedin' in session:
         if session['is_retailer'] == 0:
             cursor = mysql.connection.cursor()
-            cursor.execute("SELECT purchase_id,user_id,item_name, price, amount_paid, purchase_date  FROM Purchase WHERE user_id = % s",[session['user_id']])
+            cursor.execute("SELECT purchase_id,user_id,item_name, price, amount_paid, purchase_date  FROM Purchases WHERE user_id = % s",[session['user_id']])
             purchase_details = cursor.fetchall()
         else:
             cursor = mysql.connection.cursor()
-            cursor.execute("SELECT purchase_id,user_id,item_name, price, amount_paid, purchase_date FROM Purchase")
+            cursor.execute("SELECT purchase_id,user_id,item_name, price, amount_paid, purchase_date FROM Purchases")
             purchase_details = cursor.fetchall()
     
    
@@ -253,26 +255,27 @@ def addpayment():
                 payment_date = request.form['payment_date']
                 cursor = mysql.connection.cursor()
                 cursor.execute("INSERT INTO Payments(purchase_id, amount_paid, payment_date) VALUES(% s,% s,% s)",[purchase_id,amountpaid,payment_date])
-                cursor.execute("UPDATE Purchase SET amount_paid=amount_paid + % s WHERE purchase_id = % s",[amountpaid,purchase_id])
+                cursor.execute("UPDATE Purchases SET amount_paid=amount_paid + % s WHERE purchase_id = % s",[amountpaid,purchase_id])
                 mysql.connection.commit()
-                cursor.execute("SELECT item_name, price, amount_paid, user_id, purchase_date FROM Purchase WHERE purchase_id = %s",[purchase_id])
+                cursor.execute("SELECT item_name, price, amount_paid, user_id, purchase_date FROM Purchases WHERE purchase_id = %s",[purchase_id])
                 details = cursor.fetchone()
                 item = details[0]
                 price = details[1]
                 tot_amount_paid = details[2]
                 userid = details[3]
                 purchase_date = details[4]
-                cursor.execute("SELECT phonenumber, username FROM Users WHERE user_id = %s",[userid])
+                cursor.execute("SELECT phonenumber, username FROM Users WHERE userid = %s",[userid])
                 user = cursor.fetchone()
                 recipient = user[0]
                 username = user[1]
                 pending_amount = price-tot_amount_paid
 
 
-                msg = f'''Payment Detail! Hey {username}, we hope you are doing well. Payment Details: Item : {item}, Amount Paid: {amountpaid}, Payment Date: {payment_date} / Pending Payment Details : Item : {item}, Price: {price}, Purchase Date: {purchase_date}, Amount Paid: {tot_amount_paid}, Pending Amount: {pending_amount}'''
+                msg = f'''Payment Detail! Hey {username}, we hope you are doing well. Payment Details: Item : {item}, Amount Paid: {amountpaid}, Payment Date: {payment_date} / Pending Payment Details : Item : {item}, Price: {price}, Purchases Date: {purchase_date}, Amount Paid: {tot_amount_paid}, Pending Amount: {pending_amount}'''
                    
                 send_sms(recipient,msg)
-                return redirect(url_for('home'))
+
+
         return render_template('addpayment.html')
     else:
         return redirect(url_for('intro'))
@@ -282,11 +285,11 @@ def pendingpayments():
     if 'loggedin' in session:
         if session['is_retailer'] == 0:
             cursor = mysql.connection.cursor()
-            cursor.execute("SELECT purchase_id,user_id,item_name, price, amount_paid, purchase_date FROM Purchase WHERE amount_paid<price AND user_id = % s",[session['user_id']])
+            cursor.execute("SELECT purchase_id,user_id,item_name, price, amount_paid, purchase_date FROM Purchases WHERE amount_paid<price AND user_id = % s",[session['user_id']])
             pending_payments = cursor.fetchall()
         else:
             cursor = mysql.connection.cursor()
-            cursor.execute("SELECT purchase_id,user_id,item_name, price, amount_paid, purchase_date FROM Purchase WHERE amount_paid<price")
+            cursor.execute("SELECT purchase_id,user_id,item_name, price, amount_paid, purchase_date FROM Purchases WHERE amount_paid<price")
             pending_payments = cursor.fetchall()
         
         
@@ -299,7 +302,7 @@ def paymentdetails():
     if 'loggedin' in session:
         if session['is_retailer'] == 0:
          cursor = mysql.connection.cursor()
-         cursor.execute("SELECT * FROM Payments WHERE purchase_id IN (SELECT purchase_id FROM Purchase WHERE user_id = % s)",[session['user_id']])
+         cursor.execute("SELECT * FROM Payments WHERE purchase_id IN (SELECT purchase_id FROM Purchases WHERE user_id = % s)",[session['user_id']])
          payment_details = cursor.fetchall()
         else:
           cursor = mysql.connection.cursor()
@@ -326,16 +329,24 @@ def pendingemail(id):
             details = cursor.fetchone()
             recipient = details[0]
             recipient_name = details[1]
-            cursor.execute("Select item_name, price, purchase_date, amount_paid FROM Purchase WHERE user_id = %s",[id])
+            cursor.execute("select item_name, price, purchase_date, amount_paid FROM Purchases WHERE user_id = %s",[id])
             purchase = cursor.fetchone()
             pending_amount = int(purchase[1]) - int(purchase[3])
 
-            msg = f'''Pending Payment Alert!!! Hey {recipient_name}, we hope you are doing well. The payment is still pending for the purchase item - {purchase[0]} made on {purchase[2]}. Pay the pending payment within two days without fail. Pending Payment Details :Item: {purchase[0]}, Price: {purchase[1]}, Purchase Date: {purchase[2]}, Amount Paid: {purchase[3]}, Pending Amount: {pending_amount}'''
+            msg = f'''Pending Payment Alert!!! Hey {recipient_name}, we hope you are doing well. The payment is still pending for the purchase item - {purchase[0]} made on {purchase[2]}. Pay the pending payment within two days without fail. Pending Payment Details :Item: {purchase[0]}, Price: {purchase[1]}, Purchases Date: {purchase[2]}, Amount Paid: {purchase[3]}, Pending Amount: {pending_amount}'''
             
             send_sms(recipient,msg)
         return redirect(url_for('pendingpayments'))
     else:
         redirect(url_for('intro'))
+
+
+@app.route('/verify')
+def verify():
+    # cursor = mysql.connection.cursor()
+    # cursor.execute("UPDATE Users set is_verified = 1 WHERE user_id = %s",[id])    
+    return render_template('verification.html')
+    
         
 @app.route('/intro')
 def intro():

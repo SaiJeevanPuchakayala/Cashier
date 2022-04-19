@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E Cashier</title>
+    <link rel="icon" href="{{ url_for('static', filename = 'images/icon.ico') }}" type="image/icon type">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>
+</head>
+<body style="background-color: #e7ff5f;">
+    
+
+    <div style="background-color: #e7ff5f;" class="ui placeholder segment">
+
+        <a href="/intro" style="font-size:xx-large;background-color: #1b1c1d;" class="ui inverted block center aligned header">
+          <i class="book icon"></i>
+          Payment Record Application
+        </a>
+    
+
+        <div style="background-color: #1b1c1d;" class="ui placeholder segment">
+
+        <div style="margin-top: 20px;" class="ui placeholder inverted segment">
+            <div class="ui icon header">
+              <i class="user plus larger icon"></i>
+            Please verify your Mobile Number, 
+            a verification link is sent to given Mobile Number.
+            </div>
+            <div class="inline">
+              <a  href="{{ url_for('home') }}" ><div class="ui primary animated fade button" tabindex="0">
+                  <div class="visible content">Back to Home</div>
+                  <div class="hidden content">
+                      <i class="left arrow icon"></i>
+                  </div>
+                </div></a>
+          </div>
+         </div>
+
+
+         <div style="background-color: #242c36;" class="ui inverted segment">
+            <h3 class="ui block inverted header">
+                About Cashier
+            </h3>
+            <p style="font-size: xx-larger;" class="ui left aligned header">A Payment book application designed to maintain customers, payments, and their purchases. A retailer will be an admin of the application and each customer of the retailer’s shop will be the user. Customers can create their account in the application with their details and they will be able to see their purchase history, pending payments. Admin will maintain data about purchases made by the customers & can see payment details and pending payment of the customers and will send alerts to the customers via sms if there is any due for payment or payment is pending for a long time.
+            </p>
+         </div>
+        </div>
+
+        <div class="ui inverted placeholder segment">
+          <div class="ui icon header">
+            <i class="shopping cart icon"></i>
+            All types of Electronic Gadgets are Available!
+          </div>
+          <div class="inline">
+            <i class="gamepad large icon"></i>
+            <i class="camera retro large icon"></i>
+            <i class="print large icon"></i>
+            <i class="desktop large icon"></i>
+            <i class="headphones large icon"></i>
+            <i class="laptop large icon"></i>
+            <i class="microchip large icon"></i>
+            <i class="mobile large icon"></i>
+            <i class="tablet large icon"></i>
+            <i class="tv large icon"></i>
+          </div>
+        </div>
+    </div>
+</body>
+</html>
