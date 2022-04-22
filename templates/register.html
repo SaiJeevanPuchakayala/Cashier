@@ -29,7 +29,7 @@
 
       <a href="/intro"><h3 style="font-size:xx-large;background-color: #1b1c1d;" class="ui inverted block center aligned header">
         <i class="book icon"></i>
-        Payment Record Application
+        E-Cashier
         </h3></a>
     
 
@@ -46,8 +46,13 @@
                   <form action="" method="POST" class="ui large form">
                     <div class="ui stacked inverted segment">
                       <div class="field">
-                        {% if message %}
-                        <div class="ui red message">{{message}}</div>
+                        {% if failed_message %}
+                        <div class="ui red message">{{failed_message}}</div>
+                        {% endif %}
+                      </div>
+                      <div class="field">
+                        {% if success_message %}
+                        <div class="ui green message">{{success_message}}</div>
                         {% endif %}
                       </div>
                       <div class="field">
@@ -66,7 +71,7 @@
                       <div class="field">
                         <div class="ui left icon input">
                           <i class="phone icon"></i>
-                          <input type="number" name="pnumber" placeholder="Enter Mobile Number" required>
+                          <input type="number" name="pnumber" placeholder="Enter 10 digit Mobile Number" required>
                         </div>
                       </div>
 

@@ -32,7 +32,7 @@
 
         <h3 style="font-size:xx-large;background-color: #1b1c1d;" class="ui inverted block center aligned header">
           <i class="book icon"></i>
-          Payment Record Application
+          E-Cashier
         </h3>
     
 
@@ -49,27 +49,32 @@
                   <form action="" method="POST" class="ui large form">
                     <div class="ui stacked inverted segment">
                       <div class="field">
+                        {% if message %}
+                        <div class="ui green message">{{message}}</div>
+                        {% endif %}
+                      </div>
+                      <div class="field">
                         <div class="ui left icon input">
                         <i class="cart arrow down icon"></i>
-                          <input type="text" value={{purchase[3]}} name="item" placeholder="Enter Item Name">
+                          <input type="text" value={{purchase[2]}} name="item" placeholder="Enter Item Name">
                         </div>
                       </div>
                       <div class="field">
                         <div class="ui left icon input">
                         <i class="rupee sign icon"></i>
-                          <input type="text" value={{purchase[4]}} name="price" placeholder="Enter the Price">
+                          <input type="text" value={{purchase[3]}} name="price" placeholder="Enter the Price">
                         </div>
                       </div>
                       <div class="field">
                         <div class="ui left icon input">
                             <i class="rupee sign icon"></i>
-                          <input type="text" value={{purchase[5]}} name="amount_paid" placeholder="Amount Paid">
+                          <input type="text" value={{purchase[4]}} name="amount_paid" placeholder="Amount Paid">
                         </div>
                       </div>
                       <div class="field">
                             <div class="ui input left icon">
                               <i class="calendar icon"></i>
-                              <input type="date" value={{purchase[2]}} name="purchase_date" placeholder="Purchase Date">
+                              <input type="date" value={{purchase[5]}} name="purchase_date" placeholder="Purchase Date">
                             </div>
                       </div>
                       <button type="submit" class="ui fluid large blue submit button">Update Purchase</div>
